@@ -72,8 +72,13 @@ header {
       background-color: #1ED760; }
 
 main {
+  height: 80vh;
   width: 100%;
   margin-top: 40px; }
+  main #mainrow {
+    height: 100%; }
+  main * {
+    border: 1px solid red; }
   main .queue-container {
     margin: 0;
     display: flex;
