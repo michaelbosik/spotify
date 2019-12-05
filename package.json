@@ -10,6 +10,7 @@
         "run": "node js/server.js"
     },
     "dependencies": {
+        "dick": "^1.1.1",
         "express": "^4.17.1",
         "express-session": "^1.16.2",
         "mime": "^2.4.4",
