@@ -48,6 +48,11 @@ const sendFile = function( response, filename ) {
   });
 };
 
+//Orders the chosen playlist based on the given parameters, creating a new playlist and sending to spotify
+const generatePlaylist = function(name, parameters){
+
+};
+
 app.get('/', function(request, response) {
   sendFile( response, './index.html' );
 });
@@ -93,52 +98,17 @@ app.get('/logout', function(req, res) {
   res.redirect('/');
 });
 
-app.get('/search', (req, res) => {
-  if (!req.user) {
-    req.user = {
-      token: 'invalid'
-    };
-  }
-  const results = {
-    url: `https://api.spotify.com/v1/search?${querystring.stringify(req.query)}&type=track`,
-    headers: {
-      Authorization: `Bearer ${req.user.token}`,
-    },
-    json: true,
-  };
-  request.get(results, (err, response, body) => {
-    if (err) {
-      console.log(err);
-    }
-    res.json(body);
-  });
+//returns a series of objects which are {image, name} for all a user's playlists
+app.get('/getPlaylists', function(req, res) {
+  //res.end(db.get('queue[0]'));
 });
 
-app.post('/queue', function(req, res) {
-  db.get('queue').push({
-    id: req.body.id,
-    spotify_id: req.body.spotify_id,
-    song_name: req.body.song_name,
-    artist_name: req.body.artist_name,
-    artist_id: req.body.artist_id,
-    length: req.body.length,
-    added_by: req.body.user,
-    country_list: req.body.country_list
-  }).write();
-  db.update('count', (n) => n + 1).write();
-  res.end(JSON.stringify(db.get('queue').find({spotify_id: req.body.spotify_id}).value()));
-});
-
-app.get('/getSong', function(req, res) {
-  res.end(db.get('queue[0]'));
-});
-
-app.get('/getQueue', function(req, res) {
-  res.end(JSON.stringify(db.get('queue').value()));
-});
-
-app.get('/queueLen', function(req, res) {
-  res.end(JSON.stringify(db.get('count').value()));
+//Receives the parameters for designing the custom playlist from the frontend.
+app.post('/sendParams', function(req, res) {
+  let name = req.body.name;
+  let params = req.body.params;
+  let retVal = generatePlaylist(name, params);
+  res.end(JSON.stringify(retVal));
 });
 
 app.listen( process.env.PORT || port );
