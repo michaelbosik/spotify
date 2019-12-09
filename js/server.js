@@ -107,6 +107,8 @@ app.get('/logout', function(req, res) {
 
 //returns a series of objects which are {image, name, id} for all a user's playlists
 app.get('/getPlaylists', function(req, res) {
+    console.log("token is ", access_token);
+
     if(!logged_user_id){
         res.json({message: 'user not logged in'});
     }
@@ -114,7 +116,7 @@ app.get('/getPlaylists', function(req, res) {
     let results = {
         url: 'https://api.spotify.com/v1/users/' + logged_user_id + '/playlists',
         headers: {
-            Authorization: `Bearer ${req.user.token}`,
+            Authorization: `Bearer ${access_token}`,
         },
         json: true
     };
@@ -122,6 +124,7 @@ app.get('/getPlaylists', function(req, res) {
         if (err) {
             console.log(err)
         }
+        console.log(body);
         res.json(body);
     });
 });
