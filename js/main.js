@@ -32,11 +32,11 @@ function init() {
       user=data;
       if (user) {
         document.getElementById('log-in-modal').style.display = 'none';
+        getPlaylists();
       } else {
         document.getElementById('log-in-modal').style.display = 'block';
       }
     });
-    getPlaylists();
 }
 
 function changeSetting(key, value){
