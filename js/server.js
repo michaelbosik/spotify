@@ -13,6 +13,8 @@ const client_id = 'c4d49e20497a4a48a126d9eccbfd600e';
 const client_secret = '3cfc484c82e547c4a84c843ed608dc51';
 const redirect_uri = 'http://localhost:3000/callback';
 
+var logged_user_id = '';
+
 let access_token = '';
 
 passport.use(
@@ -70,7 +72,7 @@ app.get('/main.js', function(request, response) {
 });
 
 passport.serializeUser(function(user, done) {
-    console.log(user);
+  logged_user_id = user.id;
   done(null, user);
 });
 
@@ -98,15 +100,19 @@ app.get('/user', function(req, res){
 
 app.get('/logout', function(req, res) {
   access_token = '';
+  logged_user_id = '';
   req.session.destroy();
   res.redirect('/');
 });
 
-//returns a series of objects which are {image, name} for all a user's playlists
+//returns a series of objects which are {image, name, id} for all a user's playlists
 app.get('/getPlaylists', function(req, res) {
-    let user_id = req.user.id; // get spotify user id
+    if(!logged_user_id){
+        res.json({message: 'user not logged in'});
+    }
+
     let results = {
-        url: 'https://api.spotify.com/v1/users/' + user_id + '/playlists',
+        url: 'https://api.spotify.com/v1/users/' + logged_user_id + '/playlists',
         headers: {
             Authorization: `Bearer ${req.user.token}`,
         },
