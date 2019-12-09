@@ -1,3 +1,31 @@
+var settings = [
+    {
+        key: "danceability",
+        value: 0
+    },
+    {
+        key: "instrumentalness",
+        value: 0
+    },
+    {
+        key: "speechiness",
+        value: 0
+    },
+    {
+        key: "valence",
+        value: 0
+    },
+    {
+        key: "loudness",
+        value: 0
+    },
+    {
+        key: "acousticness",
+        value: 0
+    }
+]
+
+var user_playlists = []
 
 function init() {
     $.get('/user', function(data) {
@@ -8,20 +36,38 @@ function init() {
         document.getElementById('log-in-modal').style.display = 'block';
       }
     });
+    getPlaylists();
+}
+
+function changeSetting(key, value){
+    settings.forEach(
+        function(setting){
+            if(setting.key == key){
+                setting.value = value;
+            }
+        }
+    )
 }
 
 function getPlaylists(){
-    //hit server GET - returns list of names
-    //generateTable("User Lists", names)
+    $.get('/getPlaylists', function(data, status) {
+        if(status == 'success'){
+            user_playlists = data;
+            generateTable("User Playlists", user_playlists);
+        }
+    })
 }
 
 function plotData(data){
     //chart data somehow Google Charts API?
 }
 
-function generateTable(id, list){
-    //iterate through list
-    //renderItem(id, item)
+function generateTable(listID, list){
+    list.forEach(
+        function(listItem){
+            renderItem(listID, listItem)
+        }
+    )
 }
 
 function sortList(id, params){
@@ -31,6 +77,7 @@ function sortList(id, params){
 
 function renderItem(listID, item){
     //use listID to create row items
+    console.log(listID+" "+item)
 }
 
 module.exports = {init, changeSetting};
