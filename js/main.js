@@ -1,6 +1,13 @@
 
-function login(){
-
+function init() {
+    $.get('/user', function(data) {
+      user=data;
+      if (user) {
+        document.getElementById('log-in-modal').style.display = 'none';
+      } else {
+        document.getElementById('log-in-modal').style.display = 'block';
+      }
+    });
 }
 
 function getPlaylists(){
@@ -25,3 +32,5 @@ function sortList(id, params){
 function renderItem(listID, item){
     //use listID to create row items
 }
+
+module.exports = {init, changeSetting};

@@ -5,7 +5,7 @@
       <meta charset="utf-8">
 
       <!-- Styles [Font, Bootstrap, SCSS, FA] -->
-      <link rel=stylesheet href="styles/style.css">
+      <link rel=stylesheet href="/style.css">
       <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
       <script src="https://kit.fontawesome.com/6998a6816b.js" crossorigin="anonymous"></script>
@@ -18,6 +18,12 @@
       
       <!-- Custom Scripts [Bundle and Init] -->
       <script src="bundle.js"></script>
+      <script>
+         const s = require('spotify');
+         window.onload = function(){
+             s.init();
+         }
+       </script>
    </head>
    <body>
       <div class="log-in-modal" id="log-in-modal">
