@@ -52,7 +52,8 @@ function changeSetting(key, value){
 function getPlaylists(){
     $.get('/getPlaylists', function(data, status) {
         if(status == 'success'){
-            user_playlists = data;
+            //console.log("data is", data);
+            user_playlists = data.outputLists;
             generateTable("User Playlists", user_playlists);
         }
     })
@@ -77,7 +78,7 @@ function sortList(id, params){
 
 function renderItem(listID, item){
     //use listID to create row items
-    console.log(listID+" "+item)
+    console.log(listID, item.name);
 }
 
 module.exports = {init, changeSetting};

@@ -124,8 +124,7 @@ app.get('/getPlaylists', function(req, res) {
         if (err) {
             console.log(err)
         }
-        console.log(body);
-        res.json(body);
+        res.json(trimData(body));
     });
 });
 
@@ -136,5 +135,20 @@ app.post('/sendParams', function(req, res) {
   let retVal = generatePlaylist(name, params); //the statistics of the generated playlist are returned
   res.end(JSON.stringify(retVal));
 });
+
+function trimData(data){
+    let inputLists = data.items;
+    let outputLists = [];
+    inputLists.forEach(playlist => {
+        let item =
+            {
+                id: playlist.id,
+                images: playlist.images,
+                name: playlist.name
+            };
+        outputLists.push(item);
+    });
+    return {outputLists};
+}
 
 app.listen( process.env.PORT || port );
