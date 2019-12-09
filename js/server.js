@@ -9,8 +9,8 @@ const request = require('request');
 const app = express();
 const port = 3000;
 const SpotifyStrategy = require('passport-spotify').Strategy;
-const client_id = 'da70dd0556874f0189eb6c64543eef72';
-const client_secret = 'c11bdf5f5886434aac3b5dbe1f02984b';
+const client_id = 'c4d49e20497a4a48a126d9eccbfd600e';
+const client_secret = '3cfc484c82e547c4a84c843ed608dc51';
 const redirect_uri = 'http://localhost:3000/callback';
 
 let access_token = '';
@@ -70,11 +70,12 @@ app.get('/main.js', function(request, response) {
 });
 
 passport.serializeUser(function(user, done) {
+    console.log(user);
   done(null, user);
 });
 
 passport.deserializeUser(function(user, done) {
-  done(null, db.get('users').find({id: user.id}).value());
+  done(null, user);
 });
 
 app.get('/login-spotify',
@@ -89,25 +90,41 @@ app.get('/callback',
 );
 
 app.get('/user', function(req, res){
-  res.end(loggedIn);
+    console.log("/////////USER CALL//////");
+    if(access_token){
+        res.send(req.body);
+    }
 });
 
 app.get('/logout', function(req, res) {
-  loggedIn = '';
+  access_token = '';
   req.session.destroy();
   res.redirect('/');
 });
 
 //returns a series of objects which are {image, name} for all a user's playlists
 app.get('/getPlaylists', function(req, res) {
-  //res.end(db.get('queue[0]'));
+    let user_id = req.user.id; // get spotify user id
+    let results = {
+        url: 'https://api.spotify.com/v1/users/' + user_id + '/playlists',
+        headers: {
+            Authorization: `Bearer ${req.user.token}`,
+        },
+        json: true
+    };
+    request.get(results, (err, response, body) => {
+        if (err) {
+            console.log(err)
+        }
+        res.json(body);
+    });
 });
 
 //Receives the parameters for designing the custom playlist from the frontend.
 app.post('/sendParams', function(req, res) {
   let name = req.body.name;
   let params = req.body.params;
-  let retVal = generatePlaylist(name, params);
+  let retVal = generatePlaylist(name, params); //the statistics of the generated playlist are returned
   res.end(JSON.stringify(retVal));
 });
 
