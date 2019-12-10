@@ -51,8 +51,27 @@ const sendFile = function( response, filename ) {
 };
 
 //Orders the chosen playlist based on the given parameters, creating a new playlist and sending to spotify
-const generatePlaylist = function(name, parameters){
+const createPlaylist = function(id, parameters){
+    console.log("----------Creating Playlist------------------");
 
+    let results = {
+        url: 'https://api.spotify.com/v1/users/' + logged_user_id + '/playlists',
+        headers: {
+            Authorization: `Bearer ${access_token}`,
+        },
+        json: true,
+        data:{
+            "name": "New Test Playlist",
+            "description": "A Testing Boi",
+            "public": false
+        }
+    };
+    request.get(results, (err, response, body) => {
+        if (err) {
+            console.log(err)
+        }
+        console.log(body);
+    });
 };
 
 app.get('/', function(request, response) {
@@ -130,9 +149,10 @@ app.get('/getPlaylists', function(req, res) {
 
 //Receives the parameters for designing the custom playlist from the frontend.
 app.post('/sendParams', function(req, res) {
-  let name = req.body.name;
+    console.log("params sent");
+  let id = req.body.id;
   let params = req.body.params;
-  let retVal = generatePlaylist(name, params); //the statistics of the generated playlist are returned
+  let retVal = createPlaylist(id, params); //the statistics of the generated playlist are returned
   res.end(JSON.stringify(retVal));
 });
 

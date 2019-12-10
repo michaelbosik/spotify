@@ -78,7 +78,7 @@ function sortList(id){
         type: "POST",
         url: "/sendParams",
         data: {
-            name: id,
+            id: id,
             params: settings
         },
         success: function(data){
