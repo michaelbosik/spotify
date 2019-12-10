@@ -88,8 +88,12 @@ function sortList(id){
 
 function renderItem(listID, item){
     
-    if(!item.images[0].url)
-        item.images[0].url = "../default-playlist.png"
+    if(item.images.length == 0)
+        item.images[0] = {
+            height: 640,
+            url: "https://www.freepnglogos.com/uploads/spotify-logo-png/logo-spotify-png-7.png",
+            width: 640
+        }
 
     document.getElementById(listID).innerHTML += 
     "<div class='playlistItem' onclick=s.sortList('"+item.id+"')><img class='playlistImage' src='"+
