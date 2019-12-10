@@ -29,12 +29,11 @@ var user_playlists = []
 
 function init() {
     $.get('/user', function(data) {
-      user=data;
-      if (user) {
-        document.getElementById('log-in-modal').style.display = 'none';
+      if (data) {
+        $('log-in-modal').style.display = 'none';
         getPlaylists();
       } else {
-        document.getElementById('log-in-modal').style.display = 'block';
+        $('log-in-modal').style.display = 'block';
       }
     });
 }
