@@ -25,17 +25,16 @@ var settings = [
     }
 ]
 
-var user_playlists = []
-
 function init() {
     $.get('/user', function(data) {
       if (data) {
         document.getElementById('log-in-modal').style.display = 'none';
         getPlaylists();
       } else {
-        document.getElementById('#log-in-modal').style.display = 'block';
+        document.getElementById('log-in-modal').style.display = 'block';
       }
     });
+    // document.getElementsByClassName('setting').forEach().style.display = 'none';
 }
 
 function changeSetting(key, value){
@@ -46,52 +45,44 @@ function changeSetting(key, value){
             }
         }
     )
+    console.log(settings);
 }
 
 function getPlaylists(){
-    $.get('/getPlaylists', function(data, status) {
-        if(status == 'success'){
-            //console.log("data is", data);
-            user_playlists = data.outputLists;
-            generateTable("User Playlists", user_playlists);
-
+    $.get('/getPlaylists', function(data, status){
+        if(status == "success"){
+            listID = "userPlaylists";
+            document.getElementById("tableDiv").innerHTML = 
+            "<div class='playlistTable w-100 h-100' id='"+listID+"'></div>";
+            data.outputLists.forEach(
+                function(listItem){
+                    if(listItem.name.length > 24)
+                        listItem.name = listItem.name.substring(0, 20)+"...";
+                    renderItem(listID, listItem)
+                }
+            )
+            // document.getElementsByClassName('setting').forEach().style.display = 'block';
         }
-    })
+    });
 }
 
 function plotData(data){
+    console.log(data);
     //chart data somehow Google Charts API?
 }
 
-function generateTable(listID, list){
-    document.getElementById("tableDiv").innerHTML = 
-    "<div class='playlistTable w-100 h-100' id='"+listID+"'></div>";
-    list.forEach(
-        function(listItem){
-            renderItem(listID, listItem)
-        }
-    )
-}
-
 function sortList(id){
-    $.ajax({
-        type: "POST",
-        url: "/sendParams",
-        data: {
-            name: id,
-            params: settings
-        },
-        success: function(data){
+    $.post('/sendParams', {
+        id: id,
+        params: settings
+    }, function(data, status){
+        if(status == "success"){
             plotData(data);
         }
     });
 }
 
-function renderItem(listID, item){
-    
-    if(item.name.length > 24)
-        item.name = item.name.substring(0, 20)+"...";
-    
+function renderItem(listID, item){    
     document.getElementById(listID).innerHTML += 
     "<div class='playlistItem' onclick=s.sortList('"+item.id+"')><img class='playlistImage' src='"+
     item.images[0].url+"'><p>"+item.name+"</p></div>"
