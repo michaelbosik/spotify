@@ -30,10 +30,10 @@ var user_playlists = []
 function init() {
     $.get('/user', function(data) {
       if (data) {
-        $('log-in-modal').style.display = 'none';
+        document.getElementById('log-in-modal').style.display = 'none';
         getPlaylists();
       } else {
-        $('log-in-modal').style.display = 'block';
+        document.getElementById('#log-in-modal').style.display = 'block';
       }
     });
 }
@@ -54,6 +54,7 @@ function getPlaylists(){
             //console.log("data is", data);
             user_playlists = data.outputLists;
             generateTable("User Playlists", user_playlists);
+
         }
     })
 }
@@ -63,6 +64,8 @@ function plotData(data){
 }
 
 function generateTable(listID, list){
+    document.getElementById("tableDiv").innerHTML = 
+    "<div class='playlistTable w-100 h-100' id='"+listID+"'></div>";
     list.forEach(
         function(listItem){
             renderItem(listID, listItem)
@@ -70,14 +73,28 @@ function generateTable(listID, list){
     )
 }
 
-function sortList(id, params){
-    //hit server POST(id, params)
-    //onOK plotData(data)
+function sortList(id){
+    $.ajax({
+        type: "POST",
+        url: "/sendParams",
+        data: {
+            name: id,
+            params: settings
+        },
+        success: function(data){
+            plotData(data);
+        }
+    });
 }
 
 function renderItem(listID, item){
-    //use listID to create row items
-    console.log(listID, item.name);
+    
+    if(item.name.length > 24)
+        item.name = item.name.substring(0, 20)+"...";
+    
+    document.getElementById(listID).innerHTML += 
+    "<div class='playlistItem' onclick=s.sortList('"+item.id+"')><img class='playlistImage' src='"+
+    item.images[0].url+"'><p>"+item.name+"</p></div>"
 }
 
-module.exports = {init, changeSetting};
+module.exports = {init, changeSetting, sortList};

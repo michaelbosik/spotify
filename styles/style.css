@@ -75,158 +75,31 @@ main {
   height: 80vh;
   width: 100%;
   margin-top: 40px; }
-  main #mainrow {
-    height: 100%; }
-  main * {
-    border: 1px solid red; }
-  main .queue-container {
-    margin: 0;
+  main .playlistTable {
+    max-height: 100%;
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-around; }
-  main .earth {
-    height: 35vh; }
-  main .search {
-    height: 75vh; }
-  main .queue {
-    height: 35vh; }
-  main .search,
-  main .queue {
-    margin-top: 50px;
-    padding: 20px; }
-    main .search .searchTop,
-    main .search .queueTop,
-    main .queue .searchTop,
-    main .queue .queueTop {
+    justify-content: center;
+    flex-wrap: wrap; }
+    main .playlistTable .playlistItem {
       display: flex;
-      justify-content: center; }
-      main .search .searchTop #searchForm,
-      main .search .queueTop #searchForm,
-      main .queue .searchTop #searchForm,
-      main .queue .queueTop #searchForm {
-        display: inline-block;
-        border-radius: 30px;
-        overflow: hidden;
-        background: rgba(255, 255, 255, 0.1); }
-        main .search .searchTop #searchForm .search-btn,
-        main .search .queueTop #searchForm .search-btn,
-        main .queue .searchTop #searchForm .search-btn,
-        main .queue .queueTop #searchForm .search-btn {
-          text-decoration: none;
-          font-size: 18px;
-          height: 50px;
-          width: 80px;
-          border-radius: 30px;
-          border: none;
-          background-color: #1DB954; }
-          main .search .searchTop #searchForm .search-btn:hover,
-          main .search .queueTop #searchForm .search-btn:hover,
-          main .queue .searchTop #searchForm .search-btn:hover,
-          main .queue .queueTop #searchForm .search-btn:hover {
-            background-color: #1ED760; }
-          main .search .searchTop #searchForm .search-btn:active:focus, main .search .searchTop #searchForm .search-btn:focus,
-          main .search .queueTop #searchForm .search-btn:active:focus,
-          main .search .queueTop #searchForm .search-btn:focus,
-          main .queue .searchTop #searchForm .search-btn:active:focus,
-          main .queue .searchTop #searchForm .search-btn:focus,
-          main .queue .queueTop #searchForm .search-btn:active:focus,
-          main .queue .queueTop #searchForm .search-btn:focus {
-            outline: none;
-            box-shadow: none; }
-        main .search .searchTop #searchForm .search-input,
-        main .search .queueTop #searchForm .search-input,
-        main .queue .searchTop #searchForm .search-input,
-        main .queue .queueTop #searchForm .search-input {
-          height: 50px;
-          font-size: 18px;
-          padding: 20px;
-          border: 0;
-          outline: 0;
-          background: transparent; }
-          main .search .searchTop #searchForm .search-input:active:focus, main .search .searchTop #searchForm .search-input:focus,
-          main .search .queueTop #searchForm .search-input:active:focus,
-          main .search .queueTop #searchForm .search-input:focus,
-          main .queue .searchTop #searchForm .search-input:active:focus,
-          main .queue .searchTop #searchForm .search-input:focus,
-          main .queue .queueTop #searchForm .search-input:active:focus,
-          main .queue .queueTop #searchForm .search-input:focus {
-            outline: none;
-            box-shadow: none; }
-    main .search .searchBody,
-    main .search .queueBody,
-    main .queue .searchBody,
-    main .queue .queueBody {
-      margin-top: 10px;
-      padding-left: 20px;
-      padding-right: 20px;
-      overflow-y: scroll;
-      height: 100%; }
-      main .search .searchBody table,
-      main .search .queueBody table,
-      main .queue .searchBody table,
-      main .queue .queueBody table {
-        margin-top: 10px;
-        width: 100%; }
-        main .search .searchBody table thead,
-        main .search .queueBody table thead,
-        main .queue .searchBody table thead,
-        main .queue .queueBody table thead {
-          height: 30px; }
-          main .search .searchBody table thead td,
-          main .search .queueBody table thead td,
-          main .queue .searchBody table thead td,
-          main .queue .queueBody table thead td {
-            font-weight: bold;
-            text-align: center;
-            font-size: 20px; }
-        main .search .searchBody table tbody tr,
-        main .search .queueBody table tbody tr,
-        main .queue .searchBody table tbody tr,
-        main .queue .queueBody table tbody tr {
-          height: 30px;
-          text-align: center; }
-          main .search .searchBody table tbody tr td,
-          main .search .queueBody table tbody tr td,
-          main .queue .searchBody table tbody tr td,
-          main .queue .queueBody table tbody tr td {
-            text-align: center;
-            overflow: auto; }
-        main .search .searchBody table tbody tr:hover,
-        main .search .queueBody table tbody tr:hover,
-        main .queue .searchBody table tbody tr:hover,
-        main .queue .queueBody table tbody tr:hover {
-          background-color: #535353; }
-        main .search .searchBody table .song,
-        main .search .queueBody table .song,
-        main .queue .searchBody table .song,
-        main .queue .queueBody table .song {
-          width: 10px; }
-        main .search .searchBody table .artist,
-        main .search .queueBody table .artist,
-        main .queue .searchBody table .artist,
-        main .queue .queueBody table .artist {
-          width: 100px; }
-        main .search .searchBody table .album,
-        main .search .queueBody table .album,
-        main .queue .searchBody table .album,
-        main .queue .queueBody table .album {
-          width: 100px; }
-        main .search .searchBody table .length,
-        main .search .queueBody table .length,
-        main .queue .searchBody table .length,
-        main .queue .queueBody table .length {
-          width: 100px; }
-        main .search .searchBody table .added,
-        main .search .queueBody table .added,
-        main .queue .searchBody table .added,
-        main .queue .queueBody table .added {
-          width: 100px; }
-        main .search .searchBody table .delete,
-        main .search .queueBody table .delete,
-        main .queue .searchBody table .delete,
-        main .queue .queueBody table .delete {
-          width: 100px; }
+      justify-content: center;
+      align-content: center;
+      flex-wrap: wrap;
+      width: 30%;
+      padding: 10px;
+      margin: auto;
+      text-align: center; }
+      main .playlistTable .playlistItem:hover {
+        background-color: #535353; }
+      main .playlistTable .playlistItem .playlistImage {
+        height: 200px;
+        width: 200px; }
+      main .playlistTable .playlistItem p {
+        width: 100%;
+        padding-top: 20px;
+        font-size: 24px;
+        align-self: center; }
 
 ::-webkit-scrollbar {
   width: 15px; }
