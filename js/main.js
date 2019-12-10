@@ -77,6 +77,7 @@ function sortList(id){
         params: settings
     }, function(data, status){
         if(status == "success"){
+            console.log(data);
             plotData(data);
         }
     });

@@ -16,6 +16,7 @@ const redirect_uri = 'http://localhost:3000/callback';
 var logged_user_id = '';
 
 let access_token = '';
+let playlistData = '';
 
 passport.use(
     new SpotifyStrategy({
@@ -50,8 +51,22 @@ const sendFile = function( response, filename ) {
   });
 };
 
+const getPlaylistById = function(id){
+   playlistData.forEach(list =>{
+       if(list.id === id){
+           return {
+               id: id,
+               name: list.name,
+               songs: list.tracks
+           };
+       }
+   });
+};
+
 //Orders the chosen playlist based on the given parameters, creating a new playlist and sending to spotify
 const createPlaylist = function(id, parameters){
+
+
     console.log("----------Creating Playlist------------------");
 
     let results = {
@@ -152,11 +167,17 @@ app.post('/sendParams', function(req, res) {
     console.log("params sent");
   let id = req.body.id;
   let params = req.body.params;
-  let retVal = createPlaylist(id, params); //the statistics of the generated playlist are returned
-  res.end(JSON.stringify(retVal));
+
+  let playlistData = getPlaylistById(id);
+  console.log(playlistData.songs);
+  res.end(JSON.stringify(playlistData));
+
+  // let retVal = createPlaylist(id, params); //the statistics of the generated playlist are returned
+  // res.end(JSON.stringify(retVal));
 });
 
 function trimData(data){
+    playlistData = data.items; // set global variable
     let inputLists = data.items;
     let outputLists = [];
     inputLists.forEach(playlist => {
