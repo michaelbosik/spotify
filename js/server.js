@@ -60,13 +60,13 @@ const createPlaylist = function(id, parameters){
             Authorization: `Bearer ${access_token}`,
         },
         json: true,
-        data:{
+        body:{
             "name": "New Test Playlist",
             "description": "A Testing Boi",
             "public": false
         }
     };
-    request.get(results, (err, response, body) => {
+    request.post(results, (err, response, body) => {
         if (err) {
             console.log(err)
         }
@@ -100,7 +100,7 @@ passport.deserializeUser(function(user, done) {
 });
 
 app.get('/login-spotify',
-    passport.authenticate('spotify', {successRedirect: redirect_uri, failureRedirect: '/'})
+    passport.authenticate('spotify', {successRedirect: redirect_uri, failureRedirect: '/', scope:['playlist-modify-private', 'playlist-read-private'], showDialog: true})
 );
 
 app.get('/callback',
