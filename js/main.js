@@ -34,7 +34,9 @@ function init() {
         document.getElementById('log-in-modal').style.display = 'block';
       }
     });
-    // document.getElementsByClassName('setting').forEach().style.display = 'none';
+    Array.from(document.getElementsByClassName('setting')).forEach(function(i){
+        i.style.visibility = 'hidden'
+    });
 }
 
 function changeSetting(key, value){
@@ -61,7 +63,9 @@ function getPlaylists(){
                     renderItem(listID, listItem)
                 }
             )
-            // document.getElementsByClassName('setting').forEach().style.display = 'block';
+            Array.from(document.getElementsByClassName('setting')).forEach(function(i){
+                i.style.visibility = 'visible'
+            });
         }
     });
 }
@@ -82,7 +86,11 @@ function sortList(id){
     });
 }
 
-function renderItem(listID, item){    
+function renderItem(listID, item){
+    
+    if(!item.images[0].url)
+        item.images[0].url = "../default-playlist.png"
+
     document.getElementById(listID).innerHTML += 
     "<div class='playlistItem' onclick=s.sortList('"+item.id+"')><img class='playlistImage' src='"+
     item.images[0].url+"'><p>"+item.name+"</p></div>"

@@ -43,12 +43,12 @@
                </div>
                <div class="col-md-12 col-lg-4">
                   <div class="col-12">
-                     <input type="range" min="1" max="100" value="50" class="setting" onchange="s.changeSetting('danceability', value)">
-                     <input type="range" min="1" max="100" value="50" class="setting" onchange="s.changeSetting('instrumentalness', value)">
-                     <input type="range" min="1" max="100" value="50" class="setting" onchange="s.changeSetting('speechiness', value)">
-                     <input type="range" min="1" max="100" value="50" class="setting" onchange="s.changeSetting('valence', value)">
-                     <input type="range" min="1" max="100" value="50" class="setting" onchange="s.changeSetting('loudness', value)">
-                     <input type="range" min="1" max="100" value="50" class="setting" onchange="s.changeSetting('acousticness', value)">
+                     <input id="danceability" type="range" min="1" max="100" value="50" class="setting" onchange="s.changeSetting(this.id, value)">
+                     <input id="instrumentalness" type="range" min="1" max="100" value="50" class="setting" onchange="s.changeSetting(this.id, value)">
+                     <input id="speechiness" type="range" min="1" max="100" value="50" class="setting" onchange="s.changeSetting(this.id, value)">
+                     <input id="valence" type="range" min="1" max="100" value="50" class="setting" onchange="s.changeSetting(this.id, value)">
+                     <input id="loudness" type="range" min="1" max="100" value="50" class="setting" onchange="s.changeSetting(this.id, value)">
+                     <input id="acousticness" type="range" min="1" max="100" value="50" class="setting" onchange="s.changeSetting(this.id, value)">
                   </div>
                </div>
             </div>
