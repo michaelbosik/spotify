@@ -71,14 +71,14 @@ function getPlaylists(){
 }
 
 function plotData(data){
-    console.log(data);
+    console.log(JSON.parse(data));
     //chart data somehow Google Charts API?
 }
 
 function sortList(id){
     $.post('/sendParams', {
         id: id,
-        params: settings
+        params: settings,
     }, function(data, status){
         if(status == "success"){
             console.log(data);

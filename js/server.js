@@ -12,11 +12,13 @@ const SpotifyStrategy = require('passport-spotify').Strategy;
 const client_id = 'c4d49e20497a4a48a126d9eccbfd600e';
 const client_secret = '3cfc484c82e547c4a84c843ed608dc51';
 const redirect_uri = 'http://localhost:3000/callback';
+var Promise = require('promise');
 
 var logged_user_id = '';
 
 let access_token = '';
 let playlistData = '';
+let sel_name = '';
 
 passport.use(
     new SpotifyStrategy({
@@ -51,22 +53,114 @@ const sendFile = function( response, filename ) {
   });
 };
 
+const sortUris = function(audio_data, params){
+    //sorts the audio data and returns an ordered uri list
+    let uris = [];
+    audio_data.forEach(song =>{
+        uris.push(song.uri);
+    });
+    return uris
+};
+
+const sortAndAddTracks = function(data, params){
+    console.log("sortandadd", data);
+ let audio_data = data.audio_data.audio_features;
+ let plId = data.id;
+ let uriList = sortUris(audio_data, params);
+ console.log("About to send add request");
+    let results = {
+        url: 'https://api.spotify.com/v1/playlists/'+plId+'/tracks',
+        headers: {
+            Authorization: `Bearer ${access_token}`,
+        },
+        json: true,
+        body:{
+            uris: uriList
+        }
+    };
+
+    return new Promise(function(resolve, reject) {
+        request.post(results, (err, response, body) => {
+            if (err) {
+                console.log(err)
+            }
+            console.log("ADDED URIS TO PLAYLIST", body);
+            resolve({response: body, status: "added"});
+        });
+    });
+
+};
+
+const getAudioInfo = function(data){
+    let songs = data.items;
+    let querystring = '';
+    songs.forEach(s =>{
+        querystring += s.track.id +',';
+    });
+    querystring = querystring.slice(0, -1);
+
+    let results = {
+        url: 'https://api.spotify.com/v1/audio-features/?ids='+querystring,
+        headers: {
+            Authorization: `Bearer ${access_token}`,
+        },
+        json: true
+    };
+
+    return new Promise(function(resolve, reject) {
+        request.get(results, (err, response, body) => {
+            if (err) {
+                console.log(err)
+            }
+            console.log("got audio data");
+            resolve(body);
+        });
+    });
+
+};
+
+const getTracksFromUrl = function(url){
+    console.log("getting track from url", url);
+    let results = {
+        url: url,
+        headers: {
+            Authorization: `Bearer ${access_token}`,
+        },
+        json: true
+    };
+    return new Promise(function(resolve, reject){
+        request.get(results, (err, response, body) => {
+        if (err) {
+            console.log(err)
+        }
+        resolve(body);
+        });
+    });
+};
+
 const getPlaylistById = function(id){
+    console.log(playlistData);
+
+    let rd = {
+        id: id,
+        name: "nf",
+        songs: "nf"
+    };
    playlistData.forEach(list =>{
+       console.log("name, tracks:", list.name, list.tracks);
        if(list.id === id){
-           return {
+           rd =  {
                id: id,
                name: list.name,
                songs: list.tracks
            };
        }
    });
+   return rd;
 };
 
-//Orders the chosen playlist based on the given parameters, creating a new playlist and sending to spotify
-const createPlaylist = function(id, parameters){
-
-
+//returns the id of a created playlist
+const createPlaylist = function(data, name){
     console.log("----------Creating Playlist------------------");
 
     let results = {
@@ -76,16 +170,20 @@ const createPlaylist = function(id, parameters){
         },
         json: true,
         body:{
-            "name": "New Test Playlist",
+            "name": name + "_Test",
             "description": "A Testing Boi",
             "public": false
         }
     };
-    request.post(results, (err, response, body) => {
-        if (err) {
-            console.log(err)
-        }
-        console.log(body);
+
+    return new Promise(function(resolve, reject) {
+        request.post(results, (err, response, body) => {
+            if (err) {
+                console.log(err)
+            }
+            console.log("playlist creation resolved");
+            resolve({audio_data: data, id: body.id});
+        });
     });
 };
 
@@ -115,7 +213,11 @@ passport.deserializeUser(function(user, done) {
 });
 
 app.get('/login-spotify',
-    passport.authenticate('spotify', {successRedirect: redirect_uri, failureRedirect: '/', scope:['playlist-modify-private', 'playlist-read-private'], showDialog: true})
+    passport.authenticate('spotify',
+        {successRedirect: redirect_uri,
+        failureRedirect: '/',
+        scope:['playlist-modify-private', 'playlist-read-private'],
+        showDialog: true})
 );
 
 app.get('/callback',
@@ -165,15 +267,23 @@ app.get('/getPlaylists', function(req, res) {
 //Receives the parameters for designing the custom playlist from the frontend.
 app.post('/sendParams', function(req, res) {
     console.log("params sent");
+  let name = req.body.name;
   let id = req.body.id;
   let params = req.body.params;
 
-  let playlistData = getPlaylistById(id);
-  console.log(playlistData.songs);
-  res.end(JSON.stringify(playlistData));
+  let plData = getPlaylistById(id);
+  //console.log(plData.songs);
 
-  // let retVal = createPlaylist(id, params); //the statistics of the generated playlist are returned
-  // res.end(JSON.stringify(retVal));
+  getTracksFromUrl(plData.songs.href).then(function(data){
+      getAudioInfo(data).then(function(data) {
+        createPlaylist(data, plData.name).then(function (data) {
+            console.log("About to sort tracks");
+            sortAndAddTracks(data, params).then(function (data){
+              res.end(JSON.stringify(data));
+            });
+         });
+      });
+  });
 });
 
 function trimData(data){
