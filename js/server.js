@@ -149,9 +149,7 @@ const sortUris = function(audio_data, params){
     //sort sorted into curve here
     sorted = bellCurve(sorted);
     sorted.forEach(function(song){
-      console.log("score, name: ", song.score, song.name);
       uris.push(song.song.uri);
-
     });
 
     return {uris: uris, song_info: sorted}
@@ -271,8 +269,8 @@ const createPlaylist = function(data, name){
         },
         json: true,
         body:{
-            "name": name + "_Test",
-            "description": "Generated via Algorithm",
+            "name": name + "_Sorted",
+            "description": "Generated via Bosik-Duff SpotifyGen",
             "public": false
         }
     };

@@ -26,7 +26,7 @@ var settings = [
 ]
 
 function init() {
-    google.charts.load('current', {'packages':['corechart']});
+    google.charts.load('current', {'packages':['corechart', 'line']});
     $.get('/user', function(data) {
       if (data) {
         document.getElementById('log-in-modal').style.display = 'none';
@@ -84,7 +84,12 @@ function sortList(id){
             "<div id='chart' style='width: 100%; min-height: 500px;'></div>"+
             "<button class='reset btn' onclick='s.getPlaylists()'><p>Sort Again</p></button>";
             
-            plotData(data.name, data.songs, data.scores);
+            let songs = [], scores = [], features = [], name = JSON.parse(data).playlist_name;
+            JSON.parse(data).data.forEach(function(song){
+                songs.push(song.name);
+                scores.push(song.score);
+            });
+            plotData(name, songs, scores);
         }
     });
 }
@@ -117,7 +122,6 @@ function plotData(name, songs, scores) {
 
         var options = {
           title: name,
-          curveType: 'function',
           legend: { position: 'bottom' }
         };
 
