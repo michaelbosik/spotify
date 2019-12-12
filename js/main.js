@@ -26,6 +26,7 @@ var settings = [
 ]
 
 function init() {
+    google.charts.load('current', {'packages':['corechart']});
     $.get('/user', function(data) {
       if (data) {
         document.getElementById('log-in-modal').style.display = 'none';
@@ -73,21 +74,16 @@ function getPlaylists(){
     });
 }
 
-function plotData(data){
-    console.log(JSON.parse(data));
-    //chart data somehow Google Charts API?
-}
-
 function sortList(id){
     $.post('/sendParams', {
         id: id,
         params: JSON.stringify(settings),
     }, function(data, status){
         if(status == "success"){
-            console.log(data);
             document.getElementById("tableDiv").innerHTML = 
-            "<div class='playlistTable w-100 h-100' id='sortedList'></div>";
-            plotData(data);
+            "<div id='chart' style='width: 100%; min-height: 500px;'></div>"+
+            "<button class='reset btn' onclick='s.getPlaylists()'><p>Sort Again</p></button>";
+            plotData(name, songs, scores);
         }
     });
 }
@@ -106,4 +102,27 @@ function renderItem(listID, item){
     item.images[0].url+"'><p>"+item.name+"</p></div>"
 }
 
-module.exports = {init, changeSetting, sortList};
+function plotData(name, songs, scores) {
+
+        let songData = [
+            ['Song', 'Relevancy Score'],
+        ];
+
+        for(let i = 0; i < songs.length; i++){
+            songData.push([songs[i], scores[i]]);
+        }
+
+        var data = google.visualization.arrayToDataTable(songData);
+
+        var options = {
+          title: name,
+          curveType: 'function',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart'));
+
+        chart.draw(data, options);
+}
+
+module.exports = {init, changeSetting, sortList, getPlaylists};

@@ -92,7 +92,9 @@ main {
 	margin-top: 40px;
 
 	.playlistTable{
-		max-height: 100%;
+		max-height: 600px;
+		overflow-y: scroll;
+		position: relative;
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
@@ -108,6 +110,7 @@ main {
 			text-align: center;
 			&:hover{
 				background-color: map-get($colors, "secondary");
+				cursor: pointer;
 			}
 			.playlistImage{
 				height: 200px;
@@ -119,6 +122,27 @@ main {
 				font-size: 24px;
 				align-self: center;	
 			}
+		}
+	}
+	
+	.reset.btn{
+		p{
+			margin: auto;
+		}
+		align-self: center;
+		display: flex;
+		flex-flow: column wrap;
+		text-decoration: none;
+		align-content: center;
+		justify-content: center;
+		font-size: 25px;
+		height: 75px;
+		width: 300px;
+		border-radius: 30px;
+		background-color: map-get($colors, "primary");
+		margin-top: 20px;
+		&:hover {
+			background-color: map-get($colors, "primary-hover")
 		}
 	}
 
