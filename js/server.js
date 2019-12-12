@@ -56,18 +56,86 @@ const sendFile = function( response, filename ) {
 const sortUris = function(audio_data, params){
     //sorts the audio data and returns an ordered uri list
     let uris = [];
+    let sorted = false;
     audio_data.forEach(song =>{
-        uris.push(song.uri);
+      let features = [
+        {
+            key: "Danceability",
+            value: song.danceability
+        },
+        {
+            key: "Instrumentalness",
+            value: song.instrumentalness
+        },
+        {
+            key: "Speechiness",
+            value: song.speechiness
+        },
+        {
+            key: "Valence",
+            value: song.valence
+        },
+        {
+            key: "Energy",
+            value: song.energy
+        },
+        {
+            key: "Acousticness",
+            value: song.acousticness
+        }
+      ]
+
+      let similar = [];
+      let threshold = 0.2;
+      let i = 0;
+
+      features.forEach(function(feature){
+        let setting = params.find( ({ key }) => key === feature.key );
+        let min = setting.value - threshold, max = setting.value + threshold;
+        similar[i++] = feature.value > min && feature.value < max;
+      })
+
+      let score = 0;
+
+      similar.forEach(function(val){
+        if(val)
+          score++;
+      })
+
+      if(score > 1){
+        if(!sorted){
+          sorted = [];
+          sorted.push({song: song, score: score})
+        } else {
+          for(let i = 0; i < sorted.length; i++){
+            if (score > sorted[i].score){
+              sorted.splice(i, 0, {song: song, score: score})
+              i = sorted.length;
+            } else if (i == sorted.length-1){
+              sorted.push({song: song, score: score});
+              i = sorted.length;
+            }
+          }
+        }
+      }
     });
+
+    //sort sorted into curve here
+
+    sorted.forEach(function(song){
+      console.log(song.score)
+      uris.push(song.song.uri);
+    });
+
     return uris
 };
 
 const sortAndAddTracks = function(data, params){
-    console.log("sortandadd", data);
+    // console.log("sortandadd", data);
  let audio_data = data.audio_data.audio_features;
  let plId = data.id;
  let uriList = sortUris(audio_data, params);
- console.log("About to send add request");
+//  console.log("About to send add request");
     let results = {
         url: 'https://api.spotify.com/v1/playlists/'+plId+'/tracks',
         headers: {
@@ -84,7 +152,7 @@ const sortAndAddTracks = function(data, params){
             if (err) {
                 console.log(err)
             }
-            console.log("ADDED URIS TO PLAYLIST", body);
+            // console.log("ADDED URIS TO PLAYLIST", body);
             resolve({response: body, status: "added"});
         });
     });
@@ -112,7 +180,7 @@ const getAudioInfo = function(data){
             if (err) {
                 console.log(err)
             }
-            console.log("got audio data");
+            // console.log("got audio data");
             resolve(body);
         });
     });
@@ -120,7 +188,7 @@ const getAudioInfo = function(data){
 };
 
 const getTracksFromUrl = function(url){
-    console.log("getting track from url", url);
+    // console.log("getting track from url", url);
     let results = {
         url: url,
         headers: {
@@ -139,7 +207,7 @@ const getTracksFromUrl = function(url){
 };
 
 const getPlaylistById = function(id){
-    console.log(playlistData);
+    // console.log(playlistData);
 
     let rd = {
         id: id,
@@ -147,7 +215,7 @@ const getPlaylistById = function(id){
         songs: "nf"
     };
    playlistData.forEach(list =>{
-       console.log("name, tracks:", list.name, list.tracks);
+      //  console.log("name, tracks:", list.name, list.tracks);
        if(list.id === id){
            rd =  {
                id: id,
@@ -161,7 +229,7 @@ const getPlaylistById = function(id){
 
 //returns the id of a created playlist
 const createPlaylist = function(data, name){
-    console.log("----------Creating Playlist------------------");
+    // console.log("----------Creating Playlist------------------");
 
     let results = {
         url: 'https://api.spotify.com/v1/users/' + logged_user_id + '/playlists',
@@ -181,7 +249,7 @@ const createPlaylist = function(data, name){
             if (err) {
                 console.log(err)
             }
-            console.log("playlist creation resolved");
+            // console.log("playlist creation resolved");
             resolve({audio_data: data, id: body.id});
         });
     });
@@ -228,7 +296,6 @@ app.get('/callback',
 );
 
 app.get('/user', function(req, res){
-    console.log("/////////USER CALL//////");
     if(access_token){
         res.send(req.body);
     }
@@ -243,8 +310,6 @@ app.get('/logout', function(req, res) {
 
 //returns a series of objects which are {image, name, id} for all a user's playlists
 app.get('/getPlaylists', function(req, res) {
-    console.log("token is ", access_token);
-
     if(!logged_user_id){
         res.json({message: 'user not logged in'});
     }
@@ -266,23 +331,20 @@ app.get('/getPlaylists', function(req, res) {
 
 //Receives the parameters for designing the custom playlist from the frontend.
 app.post('/sendParams', function(req, res) {
-    console.log("params sent");
-  let name = req.body.name;
   let id = req.body.id;
-  let params = req.body.params;
-
+  var params = JSON.parse(req.body.params);
   let plData = getPlaylistById(id);
-  //console.log(plData.songs);
+  // console.log(plData);
 
   getTracksFromUrl(plData.songs.href).then(function(data){
-      getAudioInfo(data).then(function(data) {
-        createPlaylist(data, plData.name).then(function (data) {
-            console.log("About to sort tracks");
-            sortAndAddTracks(data, params).then(function (data){
-              res.end(JSON.stringify(data));
-            });
-         });
+    getAudioInfo(data).then(function(data) {
+      createPlaylist(data, plData.name).then(function (data) {
+        // console.log("About to sort tracks");
+        sortAndAddTracks(data, params).then(function (data){
+          res.end(JSON.stringify(data));
+        });
       });
+    });
   });
 });
 

@@ -1,26 +1,26 @@
 var settings = [
     {
-        key: "danceability",
+        key: "Danceability",
         value: 0
     },
     {
-        key: "instrumentalness",
+        key: "Instrumentalness",
         value: 0
     },
     {
-        key: "speechiness",
+        key: "Speechiness",
         value: 0
     },
     {
-        key: "valence",
+        key: "Valence",
         value: 0
     },
     {
-        key: "loudness",
+        key: "Energy",
         value: 0
     },
     {
-        key: "acousticness",
+        key: "Acousticness",
         value: 0
     }
 ]
@@ -29,25 +29,30 @@ function init() {
     $.get('/user', function(data) {
       if (data) {
         document.getElementById('log-in-modal').style.display = 'none';
+        changeSetting("Danceability", 70);
+        changeSetting("Instrumentalness", 40);
+        changeSetting("Speechiness", 30);
+        changeSetting("Valence", 30);
+        changeSetting("Energy", 50);
+        changeSetting("Acousticness", 10);
         getPlaylists();
       } else {
         document.getElementById('log-in-modal').style.display = 'block';
       }
     });
-    Array.from(document.getElementsByClassName('setting')).forEach(function(i){
-        i.style.visibility = 'hidden'
-    });
+    document.getElementById('settings').style.visibility = 'hidden';
 }
 
 function changeSetting(key, value){
+    document.getElementById(key).value = value;
     settings.forEach(
         function(setting){
             if(setting.key == key){
-                setting.value = value;
+                setting.value = value * 0.01;
             }
         }
     )
-    console.log(settings);
+    document.getElementById(key).previousSibling.innerHTML = key + ": " + value;
 }
 
 function getPlaylists(){
@@ -63,9 +68,7 @@ function getPlaylists(){
                     renderItem(listID, listItem)
                 }
             )
-            Array.from(document.getElementsByClassName('setting')).forEach(function(i){
-                i.style.visibility = 'visible'
-            });
+            document.getElementById('settings').style.visibility = 'visible';
         }
     });
 }
@@ -78,10 +81,12 @@ function plotData(data){
 function sortList(id){
     $.post('/sendParams', {
         id: id,
-        params: settings,
+        params: JSON.stringify(settings),
     }, function(data, status){
         if(status == "success"){
             console.log(data);
+            document.getElementById("tableDiv").innerHTML = 
+            "<div class='playlistTable w-100 h-100' id='sortedList'></div>";
             plotData(data);
         }
     });
