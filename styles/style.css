@@ -76,7 +76,9 @@ main {
   width: 100%;
   margin-top: 40px; }
   main .playlistTable {
-    max-height: 100%;
+    max-height: 600px;
+    overflow-y: scroll;
+    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -91,7 +93,8 @@ main {
       margin: auto;
       text-align: center; }
       main .playlistTable .playlistItem:hover {
-        background-color: #535353; }
+        background-color: #535353;
+        cursor: pointer; }
       main .playlistTable .playlistItem .playlistImage {
         height: 200px;
         width: 200px; }
@@ -100,6 +103,23 @@ main {
         padding-top: 20px;
         font-size: 24px;
         align-self: center; }
+  main .reset.btn {
+    align-self: center;
+    display: flex;
+    flex-flow: column wrap;
+    text-decoration: none;
+    align-content: center;
+    justify-content: center;
+    font-size: 25px;
+    height: 75px;
+    width: 300px;
+    border-radius: 30px;
+    background-color: #1DB954;
+    margin-top: 20px; }
+    main .reset.btn p {
+      margin: auto; }
+    main .reset.btn:hover {
+      background-color: #1ED760; }
   main input {
     background: none; }
   main .setting {
