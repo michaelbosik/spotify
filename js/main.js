@@ -83,7 +83,8 @@ function sortList(id){
             document.getElementById("tableDiv").innerHTML = 
             "<div id='chart' style='width: 100%; min-height: 500px;'></div>"+
             "<button class='reset btn' onclick='s.getPlaylists()'><p>Sort Again</p></button>";
-            plotData(name, songs, scores);
+            
+            plotData(data.name, data.songs, data.scores);
         }
     });
 }
