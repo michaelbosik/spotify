@@ -19,6 +19,7 @@ var logged_user_id = '';
 let access_token = '';
 let playlistData = '';
 let sel_name = '';
+let uri_name_objs = [];
 
 passport.use(
     new SpotifyStrategy({
@@ -51,6 +52,31 @@ const sendFile = function( response, filename ) {
       response.end( '404 Error: File Not Found' );
     }
   });
+};
+
+//returns the name for a given song uri that was previously queried
+const getNameFromUri = function(uri){
+    for(let i=0; i<uri_name_objs.length; i++){
+        if(uri_name_objs[i].uri === uri){
+            return uri_name_objs[i].name;
+        }
+    }
+}
+
+//returns the elements sorted by bell curve
+const bellCurve = function(arr){
+    let toggle = true;
+    let result = [];
+    arr.forEach(song=>{
+        song.name = getNameFromUri(song.song.uri);
+       if(toggle){
+           result.push(song);
+       } else{
+           result.unshift(song);
+       }
+       toggle =!toggle;
+    });
+    return result;
 };
 
 const sortUris = function(audio_data, params){
@@ -121,20 +147,24 @@ const sortUris = function(audio_data, params){
     });
 
     //sort sorted into curve here
-
+    sorted = bellCurve(sorted);
     sorted.forEach(function(song){
-      console.log(song.score)
+      console.log("score, name: ", song.score, song.name);
       uris.push(song.song.uri);
+
     });
 
-    return uris
+    return {uris: uris, song_info: sorted}
 };
 
 const sortAndAddTracks = function(data, params){
     // console.log("sortandadd", data);
  let audio_data = data.audio_data.audio_features;
+ let playlist_name = data.playlist_name;
  let plId = data.id;
- let uriList = sortUris(audio_data, params);
+ let sortedData = sortUris(audio_data, params);
+ let uriList = sortedData.uris;
+
 //  console.log("About to send add request");
     let results = {
         url: 'https://api.spotify.com/v1/playlists/'+plId+'/tracks',
@@ -153,7 +183,7 @@ const sortAndAddTracks = function(data, params){
                 console.log(err)
             }
             // console.log("ADDED URIS TO PLAYLIST", body);
-            resolve({response: body, status: "added"});
+            resolve({response: body, status: "added", data: sortedData.song_info, playlist_name: playlist_name});
         });
     });
 
@@ -162,8 +192,11 @@ const sortAndAddTracks = function(data, params){
 const getAudioInfo = function(data){
     let songs = data.items;
     let querystring = '';
+    uri_name_objs = [];
     songs.forEach(s =>{
         querystring += s.track.id +',';
+        //console.log("track info", s.track);
+        uri_name_objs.push({id:s.track.id, uri:s.track.uri, name:s.track.name});
     });
     querystring = querystring.slice(0, -1);
 
@@ -239,7 +272,7 @@ const createPlaylist = function(data, name){
         json: true,
         body:{
             "name": name + "_Test",
-            "description": "A Testing Boi",
+            "description": "Generated via Algorithm",
             "public": false
         }
     };
@@ -249,8 +282,8 @@ const createPlaylist = function(data, name){
             if (err) {
                 console.log(err)
             }
-            // console.log("playlist creation resolved");
-            resolve({audio_data: data, id: body.id});
+            //console.log("playlist_data", body);
+            resolve({audio_data: data, id: body.id, playlist_name: body.name});
         });
     });
 };
