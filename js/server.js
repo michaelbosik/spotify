@@ -11,7 +11,7 @@ const port = 3000;
 const SpotifyStrategy = require('passport-spotify').Strategy;
 const client_id = 'c4d49e20497a4a48a126d9eccbfd600e';
 const client_secret = '3cfc484c82e547c4a84c843ed608dc51';
-const redirect_uri = 'http://localhost:3000/callback';
+const redirect_uri = 'http://playsort.glitch.me';
 var Promise = require('promise');
 
 var logged_user_id = '';
@@ -270,7 +270,7 @@ const createPlaylist = function(data, name){
         json: true,
         body:{
             "name": name + "_Sorted",
-            "description": "Generated via Bosik-Duff SpotifyGen",
+            "description": "Generated via Bosik-Duff PlaySort",
             "public": false
         }
     };
